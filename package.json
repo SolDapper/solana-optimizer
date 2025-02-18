@@ -1,22 +1,22 @@
 {
-  "name": "mcbuild",
+  "name": "solana-optimizer",
   "version": "0.0.1",
-  "description": "optimized transaction builder",
-  "main": "mcbuild.js",
+  "description": "solana transaction optimizer",
+  "main": "optimizer.js",
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/McDegens-DAO/mcbuild.git"
+    "url": "git+https://github.com/SolDapper/solana-optimizer.git"
   },
   "keywords": [
-    "optimizer"
+    "tx optimizer"
   ],
   "author": "@SolDapper",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/McDegens-DAO/mcbuild/issues"
+    "url": "https://github.com/SolDapper/solana-optimizer/issues"
   },
-  "homepage": "https://github.com/McDegens-DAO/mcbuild",
+  "homepage": "https://github.com/SolDapper/solana-optimizer",
   "dependencies": {
     "@solana/web3.js": "^1.89.0",
     "bs58": "^5.0.0"
