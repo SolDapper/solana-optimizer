@@ -28,7 +28,7 @@ _tx_.tolerance = 1.1;                 // float  : default 1.1
 _tx_.compute = true;                  // bool   : default true
 _tx_.fees = true;                     // bool   : default true
 _tx_.priority = "Medium";             // string : VeryHigh,High,Medium,Low,Min
-const tx = await optimizer.tx(_tx_);    // mcbuild
+const tx = await optimizer.tx(_tx_);  
 
 if(typeof tx.status!="undefined"){console.log(tx);}
 else{
