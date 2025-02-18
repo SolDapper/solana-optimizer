@@ -1,12 +1,12 @@
-// name: mcbuild.js
+// name: optimizer.js
 // author: @SolDapper
-// license: MIT https://github.com/SolDapper/mcbuild/blob/main/LICENSE
+// license: MIT
 'use strict';
 import { PublicKey, Connection, TransactionMessage, VersionedTransaction, ComputeBudgetProgram } from "@solana/web3.js";
 import bs58 from 'bs58';
-class mcbuild {
+class optimizer {
     constructor() {
-      this.name = "mcbuild";
+      this.name = "solana-optimizer";
     }
     async send(rpc,tx){
         try{
@@ -169,5 +169,5 @@ class mcbuild {
         return _obj_;
     }
 }
-const mcbuildor = new mcbuild();
-export default mcbuildor;
+const _optimizer_ = new optimizer();
+export default _optimizer_;
