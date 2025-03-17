@@ -1,19 +1,15 @@
 # solana-optimizer
-builds, optimizes, serializes, and encodes a solana transaction for both apps and actions
+builds, optimizes, serializes, encodes a solana transaction for both apps and actions
+
+![powered by solana](http://mcswap.xyz/gh/stacked-color.svg)
 
 # note
 this tx optimizer requires a Helius RPC as it utilizes the getPriorityFeeEstimate method
 
-# import
-```javascript
-import optimizer from 'solana-optimizer';
-```
-
 # example
 ```javascript
-
+import optimizer from 'solana-optimizer';
 // create your instructions and then:
-
 // optimize transaction
 const _tx_ = {};
 _tx_.rpc = rpc;     
@@ -29,7 +25,6 @@ _tx_.compute = true;                  // bool   : default true
 _tx_.fees = true;                     // bool   : default true
 _tx_.priority = "Medium";             // string : VeryHigh,High,Medium,Low,Min
 const tx = await optimizer.tx(_tx_);  
-
 if(typeof tx.status!="undefined"){console.log(tx);}
 else{
     const signed = await provider.signTransaction(tx);
