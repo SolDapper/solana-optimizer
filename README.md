@@ -4,7 +4,7 @@ builds, optimizes, serializes, encodes a solana transaction for both apps and ac
 ![powered by solana](http://mcswap.xyz/gh/stacked-color.svg)
 
 # note
-this tx optimizer requires a Helius RPC as it utilizes the getPriorityFeeEstimate method
+requires a helius rpc as it utilizes the getPriorityFeeEstimate method
 
 # example
 ```javascript
