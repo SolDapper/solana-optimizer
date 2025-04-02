@@ -4,6 +4,7 @@
 'use strict';
 import { PublicKey, Connection, TransactionMessage, VersionedTransaction, ComputeBudgetProgram } from "@solana/web3.js";
 import bs58 from 'bs58';
+import { createMemoInstruction } from '@solana/spl-memo';
 class optimizer {
     constructor() {
       this.name = "solana-optimizer";
