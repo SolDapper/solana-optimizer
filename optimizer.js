@@ -130,6 +130,11 @@ class optimizer {
         const _blockhash_ = (await connection.getLatestBlockhash('confirmed')).blockhash;
         if(_priority_=="Extreme"){_priority_="VeryHigh";}
         let _payer_={publicKey:_wallet_}
+        console.log("_memo_", _memo_);
+        if(_memo_ != false){
+            const memoIx = createMemoInstruction(_memo_,[new PublicKey(_account_)]);
+            _instructions_.push(memoIx);
+        }
         if(_compute_ != false){
             let _cu_ = null;
             _cu_= await this.ComputeLimit(_rpc_,_payer_,_instructions_,_tolerance_,_blockhash_,_table_);
@@ -148,10 +153,6 @@ class optimizer {
         if(_fees_ != false){
             const get_priority = await this.FeeEstimate(_rpc_,_payer_,_priority_,_instructions_,_blockhash_,_table_);
             _instructions_.unshift(ComputeBudgetProgram.setComputeUnitPrice({microLamports:get_priority}));
-        }
-        if(_memo_ != false){
-            const memoIx = createMemoInstruction(_memo_,[new PublicKey(_account_)]);
-            _instructions_.push(memoIx);
         }
         let _message_ = new TransactionMessage({payerKey:_wallet_,recentBlockhash:_blockhash_,instructions:_instructions_,}).compileToV0Message(_table_);
         let _tx_ = new VersionedTransaction(_message_);

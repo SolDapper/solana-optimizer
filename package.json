@@ -1,6 +1,6 @@
 {
   "name": "solana-optimizer",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "solana transaction optimizer",
   "main": "optimizer.js",
   "type": "module",
