@@ -111,7 +111,7 @@ class optimizer {
         return data;
     }
     async tx(_data_){
-        let _obj_={};let _rpc_;let _account_;let _instructions_;let _signers_;let _priority_;let _tolerance_;let _serialize_;let _encode_;let _table_;let _compute_;let _fees_;
+        let _obj_={};let _rpc_;let _account_;let _instructions_;let _signers_;let _priority_;let _tolerance_;let _serialize_;let _encode_;let _table_;let _compute_;let _fees_;let _memo_;
         if(typeof _data_.rpc=="undefined"){_obj_.message="missing rpc";return _obj_;}else{_rpc_=_data_.rpc;}
         if(typeof _data_.account=="undefined"){_obj_.message="missing account";return _obj_;}else{_account_=_data_.account;}
         if(typeof _data_.instructions=="undefined"){_obj_.message="missing instructions";return _obj_;}else{_instructions_=_data_.instructions;}
@@ -123,6 +123,7 @@ class optimizer {
         if(typeof _data_.compute=="undefined"){_compute_=true;}else{_compute_=_data_.compute;}
         if(typeof _data_.fees=="undefined"){_fees_=true;}else{_fees_=_data_.fees;}
         if(typeof _data_.table=="undefined" || _data_.table==false){_table_=[];}else{_table_=[_data_.table];}
+        if(typeof _data_.memo!="undefined" && _data_.memo!=false){_memo_=_data_.memo;}else{_memo_=false;}
         const _wallet_= new PublicKey(_account_);
         const connection = new Connection(_rpc_,"confirmed");
         const _blockhash_ = (await connection.getLatestBlockhash('confirmed')).blockhash;
@@ -146,6 +147,10 @@ class optimizer {
         if(_fees_ != false){
             const get_priority = await this.FeeEstimate(_rpc_,_payer_,_priority_,_instructions_,_blockhash_,_table_);
             _instructions_.unshift(ComputeBudgetProgram.setComputeUnitPrice({microLamports:get_priority}));
+        }
+        if(_memo_ != false){
+            const memoIx = createMemoInstruction(_memo_,[new PublicKey(_account_)]);
+            _instructions_.push(memoIx);
         }
         let _message_ = new TransactionMessage({payerKey:_wallet_,recentBlockhash:_blockhash_,instructions:_instructions_,}).compileToV0Message(_table_);
         let _tx_ = new VersionedTransaction(_message_);
