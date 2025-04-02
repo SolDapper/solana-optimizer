@@ -23,7 +23,8 @@ _tx_.table = false;                   // array  : default false
 _tx_.tolerance = 1.1;                 // float  : default 1.1    
 _tx_.compute = true;                  // bool   : default true
 _tx_.fees = true;                     // bool   : default true
-_tx_.priority = "Medium";             // string : VeryHigh,High,Medium,Low,Min
+_tx_.priority = "Medium";             // string : VeryHigh,High,Medium,Low Min
+_tx_.memo = "Awesome Memo Man!";      // string : default false
 const tx = await optimizer.tx(_tx_);  
 if(typeof tx.status!="undefined"){console.log(tx);}
 else{
