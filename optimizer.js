@@ -112,68 +112,77 @@ class optimizer {
         return data;
     }
     async tx(_data_){
-        let _obj_={};let _rpc_;let _account_;let _instructions_;let _signers_;let _priority_;let _tolerance_;let _serialize_;let _encode_;let _table_;let _compute_;let _fees_;let _memo_;
-        if(typeof _data_.rpc=="undefined"){_obj_.message="missing rpc";return _obj_;}else{_rpc_=_data_.rpc;}
-        if(typeof _data_.account=="undefined"){_obj_.message="missing account";return _obj_;}else{_account_=_data_.account;}
-        if(typeof _data_.instructions=="undefined"){_obj_.message="missing instructions";return _obj_;}else{_instructions_=_data_.instructions;}
-        if(typeof _data_.signers=="undefined" || _data_.signers==false){_signers_=false;}else{_signers_=_data_.signers;}
-        if(typeof _data_.priority=="undefined"){_priority_="Low";}else{_priority_=_data_.priority;}
-        if(typeof _data_.tolerance=="undefined"){_tolerance_="1.1";}else{_tolerance_=_data_.tolerance;}
-        if(typeof _data_.serialize=="undefined"){_serialize_=false;}else{_serialize_=_data_.serialize;}
-        if(typeof _data_.encode=="undefined"){_encode_=false;}else{_encode_=_data_.encode;}
-        if(typeof _data_.compute=="undefined"){_compute_=true;}else{_compute_=_data_.compute;}
-        if(typeof _data_.fees=="undefined"){_fees_=true;}else{_fees_=_data_.fees;}
-        if(typeof _data_.table=="undefined" || _data_.table==false){_table_=[];}else{_table_=[_data_.table];}
-        if(typeof _data_.memo!="undefined" && _data_.memo!=false){_memo_=_data_.memo;}else{_memo_=false;}
-        const _wallet_= new PublicKey(_account_);
-        const connection = new Connection(_rpc_,"confirmed");
-        const _blockhash_ = (await connection.getLatestBlockhash('confirmed')).blockhash;
-        if(_priority_=="Extreme"){_priority_="VeryHigh";}
-        let _payer_={publicKey:_wallet_}
-        console.log("_memo_", _memo_);
-        if(_memo_ != false){
-            const memoIx = createMemoInstruction(_memo_,[new PublicKey(_account_)]);
-            _instructions_.push(memoIx);
-        }
-        if(_compute_ != false){
-            let _cu_ = null;
-            _cu_= await this.ComputeLimit(_rpc_,_payer_,_instructions_,_tolerance_,_blockhash_,_table_);
-            if(typeof _cu_.logs != "undefined"){
-                _obj_.status="error";
-                _cu_.message="there was an error when simulating the transaction";
-                return _cu_;
+        try{
+            let _obj_={};let _rpc_;let _account_;let _instructions_;let _signers_;let _priority_;let _tolerance_;let _serialize_;let _encode_;let _table_;let _compute_;let _fees_;let _memo_;
+            if(typeof _data_.rpc=="undefined"){_obj_.message="missing rpc";return _obj_;}else{_rpc_=_data_.rpc;}
+            if(typeof _data_.account=="undefined"){_obj_.message="missing account";return _obj_;}else{_account_=_data_.account;}
+            if(typeof _data_.instructions=="undefined"){_obj_.message="missing instructions";return _obj_;}else{_instructions_=_data_.instructions;}
+            if(typeof _data_.signers=="undefined" || _data_.signers==false){_signers_=false;}else{_signers_=_data_.signers;}
+            if(typeof _data_.priority=="undefined"){_priority_="Low";}else{_priority_=_data_.priority;}
+            if(typeof _data_.tolerance=="undefined"){_tolerance_="1.1";}else{_tolerance_=_data_.tolerance;}
+            if(typeof _data_.serialize=="undefined"){_serialize_=false;}else{_serialize_=_data_.serialize;}
+            if(typeof _data_.encode=="undefined"){_encode_=false;}else{_encode_=_data_.encode;}
+            if(typeof _data_.compute=="undefined"){_compute_=true;}else{_compute_=_data_.compute;}
+            if(typeof _data_.fees=="undefined"){_fees_=true;}else{_fees_=_data_.fees;}
+            if(typeof _data_.table=="undefined" || _data_.table==false){_table_=[];}else{_table_=[_data_.table];}
+            if(typeof _data_.memo!="undefined" && _data_.memo!=false){_memo_=_data_.memo;}else{_memo_=false;}
+            const _wallet_= new PublicKey(_account_);
+            const connection = new Connection(_rpc_,"confirmed");
+            const _blockhash_ = (await connection.getLatestBlockhash('confirmed')).blockhash;
+            if(_priority_=="Extreme"){_priority_="VeryHigh";}
+            let _payer_={publicKey:_wallet_}
+            console.log("_memo_", _memo_);
+            if(_memo_ != false){
+                const memoIx = createMemoInstruction(_memo_,[new PublicKey(_account_)]);
+                _instructions_.push(memoIx);
             }
-            else if(_cu_==null){
-                _obj_.status="error";
-                _obj_.message="there was an error when optimizing compute limit";
-                return _obj_;
+            if(_compute_ != false){
+                let _cu_ = null;
+                _cu_= await this.ComputeLimit(_rpc_,_payer_,_instructions_,_tolerance_,_blockhash_,_table_);
+                if(typeof _cu_.logs != "undefined"){
+                    _obj_.status="error";
+                    _cu_.message="there was an error when simulating the transaction";
+                    return _cu_;
+                }
+                else if(_cu_==null){
+                    _obj_.status="error";
+                    _obj_.message="there was an error when optimizing compute limit";
+                    return _obj_;
+                }
+                _instructions_.unshift(ComputeBudgetProgram.setComputeUnitLimit({units:_cu_}));
             }
-            _instructions_.unshift(ComputeBudgetProgram.setComputeUnitLimit({units:_cu_}));
+            if(_fees_ != false){
+                const get_priority = await this.FeeEstimate(_rpc_,_payer_,_priority_,_instructions_,_blockhash_,_table_);
+                _instructions_.unshift(ComputeBudgetProgram.setComputeUnitPrice({microLamports:get_priority}));
+            }
+            let _message_ = new TransactionMessage({payerKey:_wallet_,recentBlockhash:_blockhash_,instructions:_instructions_,}).compileToV0Message(_table_);
+            let _tx_ = new VersionedTransaction(_message_);
+            if(_signers_!=false){
+                _tx_.sign(_signers_);
+            }
+            if(_serialize_ === true){
+                _tx_=_tx_.serialize();
+            }
+            if(_encode_ === true){
+                _tx_= Buffer.from(_tx_).toString("base64");
+            }
+            if(_serialize_ == false || _encode_ == false){
+                _obj_ = _tx_;
+            }
+            else{
+                _obj_.status="ok";
+                _obj_.message="success";
+                _obj_.transaction=_tx_;
+            }
+            return _obj_;
+
         }
-        if(_fees_ != false){
-            const get_priority = await this.FeeEstimate(_rpc_,_payer_,_priority_,_instructions_,_blockhash_,_table_);
-            _instructions_.unshift(ComputeBudgetProgram.setComputeUnitPrice({microLamports:get_priority}));
+        catch(err){
+            const _error_ = {}
+            _error_.status="error";
+            _error_.message=err;
+            return _error_;
         }
-        let _message_ = new TransactionMessage({payerKey:_wallet_,recentBlockhash:_blockhash_,instructions:_instructions_,}).compileToV0Message(_table_);
-        let _tx_ = new VersionedTransaction(_message_);
-        if(_signers_!=false){
-            _tx_.sign(_signers_);
-        }
-        if(_serialize_ === true){
-            _tx_=_tx_.serialize();
-        }
-        if(_encode_ === true){
-            _tx_= Buffer.from(_tx_).toString("base64");
-        }
-        if(_serialize_ == false || _encode_ == false){
-            _obj_ = _tx_;
-        }
-        else{
-            _obj_.status="ok";
-            _obj_.message="success";
-            _obj_.transaction=_tx_;
-        }
-        return _obj_;
     }
 }
 const _optimizer_ = new optimizer();
