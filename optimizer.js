@@ -175,7 +175,6 @@ class optimizer {
                 _obj_.transaction=_tx_;
             }
             return _obj_;
-
         }
         catch(err){
             const _error_ = {}
