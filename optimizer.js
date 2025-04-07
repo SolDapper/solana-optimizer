@@ -131,7 +131,6 @@ class optimizer {
             const _blockhash_ = (await connection.getLatestBlockhash('confirmed')).blockhash;
             if(_priority_=="Extreme"){_priority_="VeryHigh";}
             let _payer_={publicKey:_wallet_}
-            console.log("_memo_", _memo_);
             if(_memo_ != false){
                 const memoIx = createMemoInstruction(_memo_,[new PublicKey(_account_)]);
                 _instructions_.push(memoIx);
